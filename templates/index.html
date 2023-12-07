@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Scraper</title>
+    <style>
+        /* Your CSS styling goes here */
+    </style>
+</head>
+<body>
+    <h1>Image Scraper</h1>
+    <form id="scrape-form">
+        <label for="url">Enter URL:</label>
+        <input type="text" id="url" name="url" value="https://unsplash.com/" required>
+        <button type="button" onclick="scrapeImages()">Scrape Images</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        // Your JavaScript code goes here
+        function scrapeImages() {
+    var url = document.getElementById('url').value;
+    var data = { url: url };
+
+    fetch('/scrape-images', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        var resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '';
+
+        if ('error' in data) {
+            resultDiv.innerHTML = 'Error: ' + data.error;
+        } else {
+            console.log('Scraped Image URLs:', data.images);
+
+            data.images.forEach(imgSrc => {
+                var imgElement = document.createElement('img');
+                imgElement.src = imgSrc;
+                resultDiv.appendChild(imgElement);
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+    </script>
+</body>
+</html>
